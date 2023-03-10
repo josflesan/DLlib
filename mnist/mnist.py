@@ -88,7 +88,7 @@ test_losses = []
 test_counter = [i*len(loader_train.dataset) for i in range(epochs + 1)]
 
 def train(epoch):
-    network.train()  # ?
+    network.train()  # Set to training mode
     for batch_idx, (data, target) in enumerate(loader_train):
         optimizer.zero_grad()  # Make gradients 0 as pytorch accumulates gradients by default
         output = network(data)  # Compute forward pass on data
@@ -106,15 +106,15 @@ def train(epoch):
             torch.save(optimizer.state_dict(), './results/optimizer.pt')  # Save optimizer parameters to output file
 
 def test():
-    network.eval()  # ?
+    network.eval()  # Set to testing mode
     test_loss = 0
     correct = 0
     with torch.no_grad():
         for data, target in loader_test:
-            output = network(data)
-            test_loss += F.nll_loss(output, target, size_average=False).item()
+            output = network(data)  # Compute forward pass
+            test_loss += F.nll_loss(output, target, size_average=False).item()  # Calculate test loss
             pred = output.data.max(1, keepdim=True)[1]  # Get the prediction by getting the maximal value in column
-            correct += pred.eq(target.data.view_as(pred)).sum()
+            correct += pred.eq(target.data.view_as(pred)).sum()  # Check if prediction matches label, if so add it as correct
 
         test_loss /= len(loader_test)
         test_losses.append(test_losses)        
